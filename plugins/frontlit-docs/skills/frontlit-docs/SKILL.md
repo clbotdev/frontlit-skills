@@ -36,10 +36,10 @@ Read these as needed:
 ## 3. Validate before opening the pull request
 
 - If the FrontLit MCP server offers `validate_documentation_markdown`, validate every changed file with it and fix all diagnostics.
-- Otherwise run the bundled checker from the repository root:
+- Otherwise run the checker bundled with this skill (Node 18+). It is `scripts/check.mjs` in the folder that contains this `SKILL.md`; run it from the repository root:
 
   ```bash
-  node <skill-dir>/scripts/check.mjs <docs-folder>
+  node <path-to-this-skill>/scripts/check.mjs <docs-folder>
   ```
 
   It catches the common failures (MDX/HTML, unsupported Markdown, bad frontmatter, invalid slugs, duplicate routes, broken internal links and anchors). It is a pre-check, not the authority: the `FrontLit / docs validation` check on the pull request is final. If it fails, read its annotations and push a fix to the same branch.
@@ -47,6 +47,7 @@ Read these as needed:
 ## 4. Pull request
 
 - Branch name: `docs/<short-topic>`; target the connected publishing branch.
+- Open it with `gh pr create` if the GitHub CLI is available; otherwise push the branch and give the user the GitHub compare link to open it.
 - Title: what changed, e.g. `Port docs from Fumadocs to FrontLit` or `Add webhooks guide`.
 - Description: pages added/changed, sections, anything skipped or simplified (generated pages, removed widgets, flattened tabs), and URLs that changed.
 - Remind the user that merging publishes the pages, and that `published: false` pages are merged but stay private drafts.
