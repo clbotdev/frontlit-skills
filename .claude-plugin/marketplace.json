@@ -1,0 +1,16 @@
+{
+  "name": "frontlit",
+  "owner": {
+    "name": "FrontLit"
+  },
+  "metadata": {
+    "description": "FrontLit plugins for coding agents."
+  },
+  "plugins": [
+    {
+      "name": "frontlit-docs",
+      "source": "./plugins/frontlit-docs",
+      "description": "Write FrontLit docs and port existing docs sites to FrontLit."
+    }
+  ]
+}
