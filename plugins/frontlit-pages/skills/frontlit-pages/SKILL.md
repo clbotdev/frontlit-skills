@@ -12,6 +12,10 @@ Read these as needed:
 - `references/format.md`: files, page and `site.json` keys, Markdown, media, links, validation codes and canonical form. **Read before writing any file.**
 - `references/blocks.md`: every block, its settings and what it's good for. **Read before choosing blocks.**
 - `references/writing.md`: page structure, headings, SEO, copy and section recipes.
+- `references/design.md`: hierarchy, rhythm, hero legibility, background recipes, logo strips, diagrams and tables.
+- `references/embeds.md`: how `script` embeds run (inline, shadow root), the rules and a template. **Read before writing a snippet**; test it with `scripts/test-embed.mjs`.
+- `references/comparison-pages.md`: comparison pages with tabs, measured rows and verified claims.
+- `references/theme-from-design-system.md`: map a product's design tokens to `theme` (`scripts/oklch-to-hex.mjs`).
 - `examples/frontlit/`: a valid site folder (home, pricing, a full launch page, `site.json`). Copy from it.
 
 ## 1. Find the site folder
@@ -56,7 +60,7 @@ It is a pre-check, not the authority, and there's no local preview. On the pull 
 
 ## Pages not in Git
 
-If the repository isn't connected for pages and the FrontLit MCP server is connected, the same blocks and the same writing guidance apply through its tools: `list_pages`, `get_page`, `create_page`, `update_page` (writes the draft only), `publish_page`. Differences: rich text there is TipTap JSON instead of Markdown, and media are uploaded MediaLit objects. Only call `publish_page` or `delete_page` when the user asks. If a tool answers that the page is managed in GitHub, switch to the files.
+If the repository isn't connected for pages, the user edits in the visual builder (use the **frontlit-builder** skill). If the FrontLit MCP server is connected, the same blocks and the same writing guidance apply through its tools: `list_pages`, `get_page`, `create_page`, `update_page` (writes the draft only), `publish_page`. Differences: rich text there is TipTap JSON instead of Markdown, and media are uploaded MediaLit objects. Only call `publish_page` or `delete_page` when the user asks. If a tool answers that the page is managed in GitHub, switch to the files.
 
 ## Rules
 

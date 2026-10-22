@@ -1,0 +1,6 @@
+{
+  "name": "frontlit-builder",
+  "version": "0.1.0",
+  "description": "Build FrontLit pages in the visual page builder: themes from a design system, high-end section design, Embed snippets that work in FrontLit's shadow root, and comparison pages.",
+  "author": { "name": "FrontLit" }
+}
