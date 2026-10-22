@@ -1,0 +1,167 @@
+{
+  "$schema": "https://frontlit.app/schema/page.v1.json",
+  "title": "Acme Git sync: publish your site on every merge",
+  "description": "Keep landing pages and docs in your repository, review them in pull requests with previews, and publish on merge. See how it works.",
+  "socialImage": {
+    "url": "../assets/hero.svg",
+    "alt": "Acme Git sync"
+  },
+  "layout": [
+    {
+      "name": "hero",
+      "settings": {
+        "preTitle": "New: Git sync",
+        "title": "Your website, *reviewed like code*",
+        "description": "Pages and docs live in your repository. Every pull request gets a preview; every merge publishes.",
+        "buttonCaption": "Start free",
+        "buttonAction": "https://app.acme.dev/signup",
+        "secondaryButtonCaption": "See how it works",
+        "secondaryButtonAction": "/launch#how-it-works",
+        "smallPrint": "Included in every plan.",
+        "media": {
+          "url": "../assets/hero.svg",
+          "alt": "A pull request with an Acme preview check"
+        }
+      }
+    },
+    {
+      "name": "marquee",
+      "settings": {
+        "items": [
+          {
+            "text": "GitHub",
+            "icon": "Github"
+          },
+          {
+            "text": "Markdown",
+            "icon": "FileText"
+          },
+          {
+            "text": "JSON Schema",
+            "icon": "FileJson"
+          },
+          {
+            "text": "Pull request previews",
+            "icon": "Eye"
+          },
+          {
+            "text": "Rollbacks",
+            "icon": "History"
+          }
+        ]
+      }
+    },
+    {
+      "name": "featured",
+      "settings": {
+        "cssId": "how-it-works",
+        "layout": "numbered",
+        "title": "Live in three steps",
+        "items": [
+          {
+            "title": "Connect a repository",
+            "description": "Pick the repository, branch and site folder in Settings."
+          },
+          {
+            "title": "Open a pull request",
+            "description": "Edit JSON pages or Markdown docs; a preview check links to the result."
+          },
+          {
+            "title": "Merge",
+            "description": "Acme validates every file and publishes them together, or not at all."
+          }
+        ]
+      }
+    },
+    {
+      "name": "content",
+      "settings": {
+        "title": "Previews before anything goes live",
+        "body": "Every pull request that touches your pages gets a **private preview**, so reviewers see the real page, not a diff.\n\n- Desktop and mobile\n\n- Light and dark mode\n\n- Unindexed and expiring",
+        "media": {
+          "url": "../assets/hero.svg",
+          "alt": "A private page preview"
+        }
+      }
+    },
+    {
+      "name": "content",
+      "settings": {
+        "title": "Roll back in one click",
+        "body": "Each merge is a release. If something looks wrong, activate the previous release from the dashboard and fix forward in Git.",
+        "media": {
+          "url": "../assets/hero.svg",
+          "alt": "The releases list"
+        },
+        "alignment": "right"
+      }
+    },
+    {
+      "name": "pricing",
+      "settings": {
+        "cssId": "pricing",
+        "title": "Included in every plan",
+        "description": "Git sync costs nothing extra. See all plans on the [pricing page](/pricing).",
+        "tiers": [
+          {
+            "name": "Free",
+            "price": "$0",
+            "description": "For side projects.",
+            "features": [
+              "Git sync",
+              "PR previews",
+              "Up to 3 editors"
+            ],
+            "buttonCaption": "Start free",
+            "buttonAction": "https://app.acme.dev/signup"
+          },
+          {
+            "name": "Pro",
+            "price": "$29/mo",
+            "description": "For teams.",
+            "features": [
+              "Everything in Free",
+              "Custom domain",
+              "Unlimited editors"
+            ],
+            "buttonCaption": "Start a 14-day trial",
+            "buttonAction": "https://app.acme.dev/signup?plan=pro",
+            "highlighted": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "faq",
+      "settings": {
+        "cssId": "faq",
+        "title": "Questions about Git sync",
+        "items": [
+          {
+            "question": "Can I still edit pages in the dashboard?",
+            "answer": "Yes. Dashboard edits become pull requests, so the repository stays the source of truth."
+          },
+          {
+            "question": "What happens if a file is invalid?",
+            "answer": "Nothing changes on your live site. The problem, with file and line, shows in the dashboard and on the pull request."
+          },
+          {
+            "question": "Do I have to move my existing pages by hand?",
+            "answer": "No. Export them to the repository in one pull request, then merge it."
+          }
+        ]
+      }
+    },
+    {
+      "name": "banner",
+      "settings": {
+        "layout": "boxed",
+        "title": "Ship your next page in a pull request",
+        "description": "Connect a repository in two minutes.",
+        "buttonCaption": "Start free",
+        "buttonAction": "https://app.acme.dev/signup",
+        "secondaryButtonCaption": "Browse the docs"
+      }
+    }
+  ]
+}

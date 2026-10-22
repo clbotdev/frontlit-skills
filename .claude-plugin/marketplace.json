@@ -11,6 +11,11 @@
       "name": "frontlit-docs",
       "source": "./plugins/frontlit-docs",
       "description": "Write FrontLit docs and port existing docs sites to FrontLit."
+    },
+    {
+      "name": "frontlit-pages",
+      "source": "./plugins/frontlit-pages",
+      "description": "Write FrontLit landing pages as JSON and validate them before opening a pull request."
     }
   ]
 }

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://frontlit.app/schema/page.v1.json",
+  "title": "Acme changelog",
+  "description": "Every Acme release: new blocks, fixes and improvements, newest first.",
+  "layout": [
+    {
+      "name": "hero",
+      "settings": {
+        "layout": "centered",
+        "title": "What's new in Acme",
+        "buttonCaption": "",
+        "buttonAction": "",
+        "secondaryButtonCaption": "",
+        "secondaryButtonAction": ""
+      }
+    },
+    {
+      "name": "content-feed"
+    }
+  ]
+}

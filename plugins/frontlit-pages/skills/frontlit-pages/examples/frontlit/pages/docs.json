@@ -1,0 +1,21 @@
+{
+  "$schema": "https://frontlit.app/schema/page.v1.json",
+  "title": "Acme documentation",
+  "description": "Guides and reference for connecting a repository, writing pages and publishing on merge.",
+  "layout": [
+    {
+      "name": "hero",
+      "settings": {
+        "layout": "centered",
+        "title": "Documentation",
+        "buttonCaption": "",
+        "buttonAction": "",
+        "secondaryButtonCaption": "",
+        "secondaryButtonAction": ""
+      }
+    },
+    {
+      "name": "content-feed"
+    }
+  ]
+}

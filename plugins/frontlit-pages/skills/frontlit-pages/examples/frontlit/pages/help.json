@@ -1,0 +1,28 @@
+{
+  "$schema": "https://frontlit.app/schema/page.v1.json",
+  "title": "Help and support",
+  "description": "Ask the Acme team a question or report a problem. We answer within one business day.",
+  "layout": [
+    {
+      "name": "hero",
+      "settings": {
+        "layout": "centered",
+        "title": "How can we help?",
+        "description": "Search the [docs](/docs) first, or send us a message below.",
+        "buttonCaption": "",
+        "buttonAction": "",
+        "secondaryButtonCaption": "",
+        "secondaryButtonAction": ""
+      }
+    },
+    {
+      "name": "support-form",
+      "settings": {
+        "title": "Contact support",
+        "description": "We reply by email within one business day.",
+        "buttonCaption": "Send message",
+        "successMessage": "Thanks! We'll get back to you by email."
+      }
+    }
+  ]
+}

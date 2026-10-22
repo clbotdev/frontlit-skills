@@ -15,7 +15,7 @@ Read these as needed:
 
 ## 1. Find the docs folder
 
-1. Look for `_sections.json` containing `"version": 1`. Its folder is the FrontLit docs folder, usually created by FrontLit's setup pull request (often `docs/` or `frontlit-docs/`).
+1. FrontLit syncs everything from one site folder (`frontlit/` by default, or the repository root); docs live in its `docs/` subfolder, e.g. `frontlit/docs/`, next to `pages/` and `site.json` (those are the frontlit-pages skill's). Look for that folder, or for `_sections.json` containing `"version": 1`; its folder is the docs folder.
 2. If the FrontLit MCP server is connected, `get_documentation_github` returns the connected repository, branch and folder; prefer it.
 3. If neither exists, ask the user which folder FrontLit is connected to. Do not guess, because only that folder is published.
 
