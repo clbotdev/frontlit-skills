@@ -229,8 +229,7 @@ function checkMedia(file, schema, value) {
     const key = path.at(-1);
     if ((key !== "media" && key !== "socialImage") || typeof v?.url !== "string") return;
     if (/^[a-z][a-z0-9+.-]*:/i.test(v.url) || v.url.startsWith("//")) {
-      if (/^http:/i.test(v.url)) warn(file, ptr([...path, "url"]), "INSECURE_URL", "Use https://; browsers block http:// images on an https site.");
-      else if (!/^https:/i.test(v.url)) error(file, ptr([...path, "url"]), "ASSET_URL", "Use an https:// URL or a repository path.");
+      if (!/^https:/i.test(v.url)) error(file, ptr([...path, "url"]), "ASSET_URL", "Images must be an https:// URL or a path in the repository.");
       return;
     }
     const repoPath = v.url.startsWith("/") ? normalize(v.url.slice(1)) : normalize(join(relative(root, dirname(file)), v.url));
