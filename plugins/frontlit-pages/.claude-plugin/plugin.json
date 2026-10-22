@@ -1,0 +1,6 @@
+{
+  "name": "frontlit-pages",
+  "version": "0.1.0",
+  "description": "Write FrontLit landing pages as JSON files in your repository, validate them against the published schema and open a pull request.",
+  "author": { "name": "FrontLit" }
+}

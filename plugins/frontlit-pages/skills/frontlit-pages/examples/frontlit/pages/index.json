@@ -1,0 +1,57 @@
+{
+  "$schema": "https://frontlit.app/schema/page.v1.json",
+  "title": "Acme: docs and landing pages from your repo",
+  "description": "Write docs in Markdown and pages in JSON, review them in pull requests, and publish on merge. Free for small teams.",
+  "layout": [
+    {
+      "name": "hero",
+      "settings": {
+        "title": "Docs and landing pages that *ship with your code*",
+        "description": "Write in Markdown and JSON, review in pull requests, and publish on merge.",
+        "buttonCaption": "Start free",
+        "buttonAction": "https://app.acme.dev/signup",
+        "secondaryButtonCaption": "See pricing",
+        "secondaryButtonAction": "/pricing",
+        "smallPrint": "Free for up to 3 editors. No credit card.",
+        "media": {
+          "url": "../assets/hero.svg",
+          "alt": "The Acme editor next to a pull request"
+        }
+      }
+    },
+    {
+      "name": "featured",
+      "settings": {
+        "cssId": "features",
+        "title": "Everything your site needs, in Git",
+        "items": [
+          {
+            "title": "Pages as JSON",
+            "description": "One file per page, validated against a published schema.",
+            "icon": "FileJson"
+          },
+          {
+            "title": "Publish on merge",
+            "description": "Every merge to main goes live after validation, or not at all.",
+            "icon": "GitMerge"
+          },
+          {
+            "title": "Previews on every PR",
+            "description": "A private preview link shows the result before you merge.",
+            "icon": "Eye"
+          }
+        ]
+      }
+    },
+    {
+      "name": "banner",
+      "settings": {
+        "title": "Ready to move your site into Git?",
+        "description": "Connect a repository in two minutes. Your live site stays up the whole time.",
+        "buttonCaption": "Start free",
+        "buttonAction": "https://app.acme.dev/signup",
+        "secondaryButtonCaption": "Browse the docs"
+      }
+    }
+  ]
+}

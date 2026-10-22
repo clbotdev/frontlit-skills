@@ -1,0 +1,71 @@
+{
+  "$schema": "https://frontlit.app/schema/site.v1.json",
+  "header": {
+    "links": [
+      {
+        "label": "Features",
+        "href": "/#features"
+      },
+      {
+        "label": "Pricing",
+        "href": "/pricing"
+      },
+      {
+        "label": "Launch",
+        "href": "/launch"
+      },
+      {
+        "label": "Docs",
+        "href": "/docs"
+      }
+    ],
+    "ctaLabel": "Start free",
+    "ctaHref": "https://app.acme.dev/signup"
+  },
+  "footer": {
+    "tagline": "Docs and landing pages that ship with your code.",
+    "columns": [
+      {
+        "title": "Product",
+        "links": [
+          {
+            "label": "Features",
+            "href": "/#features"
+          },
+          {
+            "label": "Pricing",
+            "href": "/pricing"
+          },
+          {
+            "label": "Changelog",
+            "href": "/changelog"
+          }
+        ]
+      },
+      {
+        "title": "Resources",
+        "links": [
+          {
+            "label": "Docs",
+            "href": "/docs"
+          },
+          {
+            "label": "Blog",
+            "href": "/blog"
+          },
+          {
+            "label": "Help",
+            "href": "/help"
+          }
+        ]
+      }
+    ],
+    "copyrightText": "© 2026 Acme Inc."
+  },
+  "redirects": [
+    {
+      "from": "/plans",
+      "to": "/pricing"
+    }
+  ]
+}

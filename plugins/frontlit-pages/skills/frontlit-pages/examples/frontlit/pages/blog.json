@@ -1,0 +1,21 @@
+{
+  "$schema": "https://frontlit.app/schema/page.v1.json",
+  "title": "The Acme blog",
+  "description": "Product news, guides and behind-the-scenes posts from the Acme team.",
+  "layout": [
+    {
+      "name": "hero",
+      "settings": {
+        "layout": "centered",
+        "title": "Notes on shipping sites from Git",
+        "buttonCaption": "",
+        "buttonAction": "",
+        "secondaryButtonCaption": "",
+        "secondaryButtonAction": ""
+      }
+    },
+    {
+      "name": "content-feed"
+    }
+  ]
+}

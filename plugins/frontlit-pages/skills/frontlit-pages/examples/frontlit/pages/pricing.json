@@ -1,0 +1,87 @@
+{
+  "$schema": "https://frontlit.app/schema/page.v1.json",
+  "title": "Pricing: start free, pay as your team grows",
+  "description": "Free for small teams. Pro adds custom domains and Git sync for $29 a month. No per-page or per-visitor fees.",
+  "layout": [
+    {
+      "name": "hero",
+      "settings": {
+        "layout": "centered",
+        "title": "Simple pricing, *no surprises*",
+        "description": "Every plan includes unlimited pages and visitors.",
+        "buttonCaption": "",
+        "buttonAction": "",
+        "secondaryButtonCaption": "",
+        "secondaryButtonAction": ""
+      }
+    },
+    {
+      "name": "pricing",
+      "settings": {
+        "title": "Choose a plan",
+        "description": "Prices are per workspace, billed monthly. Yearly billing saves 20%.",
+        "tiers": [
+          {
+            "name": "Free",
+            "price": "$0",
+            "description": "For side projects and trying things out.",
+            "features": [
+              "Up to 3 editors",
+              "acme.site subdomain",
+              "Community support"
+            ],
+            "buttonCaption": "Start free",
+            "buttonAction": "https://app.acme.dev/signup"
+          },
+          {
+            "name": "Pro",
+            "price": "$29/mo",
+            "description": "For teams that publish from Git.",
+            "features": [
+              "Unlimited editors",
+              "Custom domain",
+              "Git sync and PR previews",
+              "Email support"
+            ],
+            "buttonCaption": "Start a 14-day trial",
+            "buttonAction": "https://app.acme.dev/signup?plan=pro",
+            "highlighted": true
+          },
+          {
+            "name": "Enterprise",
+            "price": "Custom",
+            "description": "For security reviews and large rollouts.",
+            "features": [
+              "Everything in Pro",
+              "SSO and audit log",
+              "Uptime SLA"
+            ],
+            "buttonCaption": "Talk to us",
+            "buttonAction": "/help"
+          }
+        ]
+      }
+    },
+    {
+      "name": "faq",
+      "settings": {
+        "cssId": "faq",
+        "title": "Pricing questions",
+        "items": [
+          {
+            "question": "What counts as an editor?",
+            "answer": "Anyone who can change content in the Acme dashboard. Git contributors who only open pull requests are free."
+          },
+          {
+            "question": "Can I switch plans later?",
+            "answer": "Yes, upgrade or downgrade any time. Changes apply to the next invoice."
+          },
+          {
+            "question": "Do you charge for traffic?",
+            "answer": "No. Every plan includes unlimited pages and visitors."
+          }
+        ]
+      }
+    }
+  ]
+}
