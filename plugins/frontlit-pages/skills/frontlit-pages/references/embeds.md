@@ -7,7 +7,7 @@ The Embed block has two types. Which one you pick changes how the content runs.
 | **URL** | `"url"` | An `<iframe src>` with a fixed height (`height`, default 500 px) or an aspect ratio. Use it for third-party players and booking widgets. |
 | **Script / iframe snippet** | `"script"` | **Inline in the page, inside an open shadow root.** Not an iframe. Sizes to its content unless you pick an aspect ratio. |
 
-Everything below is about the **snippet** type. It's the way to build what blocks can't express: animated diagrams, comparison tables, tabbed code samples, logo strips with images.
+Everything below is about the **snippet** type. It's the way to build what blocks can't express: animated diagrams, data tables, tabbed code samples, logo strips with images.
 
 ## How a snippet is rendered
 
@@ -21,24 +21,22 @@ This follows FrontLit's `InlineEmbed` (`packages/page-builder/src/components/inl
   - `min-height: 100vh` becomes `0`, `vw` becomes `cqw`, and `@media (…width…)` becomes `@container (…)`. Width queries therefore measure the embed, not the window.
 - **Dark mode:** the host gets a `dark` class whenever the page is dark, so `:host(.dark) .x { … }` works.
 - **Scripts run, but differently from a normal page:**
-  - Scripts in a shadow root are re-created with `document.createElement("script")` and run in order.
+  - On a server-rendered (live) page the HTML parser runs each inline script once, in order, as it builds the shadow root. In the editor and after client-side navigation, FrontLit inserts the markup and re-creates each `<script>` so it runs once.
   - **`document.currentScript` is `null`**, because the script's root is a shadow root, not the document.
-  - **On a server-rendered (live) page each inline script runs twice:** once when the HTML parser builds the shadow root, then again when the page hydrates. The DOM isn't replaced in between, so a second run that binds listeners again doubles them.
-  - In the editor a script runs again every time the snippet changes, on a fresh DOM.
+  - In the editor a script runs again every time the snippet changes, on a fresh DOM. (Older FrontLit versions also ran scripts a second time on live pages; the run-once guard below keeps snippets correct either way.)
 - **Any `<script>` that mentions `window.parent` is deleted.** That pattern was an iframe-era dark-mode sync; use `:host(.dark)` instead.
-- **`<link>` tags for fonts, `preconnect`, `dns-prefetch` and `preload` are hoisted out of the shadow root into the page,** where they load for the whole page. `@font-face` doesn't work inside a shadow root.
+- **`<link>` tags for fonts, `preconnect`, `dns-prefetch` and `preload` are hoisted out of the shadow root into the page,** so a font service link works (it loads for the whole page). An `@font-face` rule inside the snippet's own `<style>` doesn't: shadow roots ignore it.
 - **In the editor a transparent overlay covers every embed** (`blocks/embed/widget.tsx`), so a click selects the block. You can't click tabs or buttons inside a snippet in the builder (FrontLit issue #110). Test interactivity locally (below).
 
 ## Rules for snippets
 
 1. **One wrapper, one prefix.** Put everything in one element: `<div class="acme-wrap" id="acme-demo">…</div>`. Choose a short product prefix (`acme-`) and start **every class, id, `@keyframes` name and custom property** with it.
 2. **Scope every CSS rule under the wrapper:** `.acme-wrap .acme-tab { … }`. Never use bare element or global selectors (`a`, `button`, `*`, `body`, `:root`). Shadow isolation protects the page today, but the same snippet must stay safe when it's previewed locally or pasted somewhere without a shadow root.
-3. **No external resources:**
-   - no `<script src>`
-   - no `<link rel="stylesheet">`, no `@import`, no web-font services such as Google Fonts
-   - no trackers
+3. **Keep it self-contained:**
+   - no `<script src>`, no `<link rel="stylesheet">`, no `@import`, no trackers: inline what you need
+   - **prefer the theme's fonts to a font service.** A Google Fonts (or similar) link works, because FrontLit hoists it to the page, but it adds a request and a font download to every visit and costs PageSpeed. If the site needs another face, set it in the theme so every block uses it.
 
-   Inline what you need. For fonts, `font: inherit` on the wrapper picks up the theme's text font. For code, name a face the theme already uses, with fallbacks, e.g. `font-family: "Spline Sans Mono", ui-monospace, monospace`. FrontLit self-hosts its theme fonts with page-level `@font-face` rules, and page-level faces work inside the shadow root.
+   For text, `font: inherit` on the wrapper picks up the theme's text font. For code, name a face the theme already uses, with fallbacks, e.g. `font-family: "Spline Sans Mono", ui-monospace, monospace`. FrontLit self-hosts its theme fonts with page-level `@font-face` rules, and page-level faces work inside the shadow root.
 4. **Follow the page's colours with fallbacks.** Map page variables to your own on the wrapper, with a fallback for each, so the snippet still renders outside FrontLit:
 
    ```css
@@ -108,7 +106,7 @@ This follows FrontLit's `InlineEmbed` (`packages/page-builder/src/components/inl
     return null;
   }
   if (!el) el = search(document);
-  if (!el) return;            // already initialised (FrontLit runs scripts twice on live pages)
+  if (!el) return;            // already initialised (the snippet was rendered twice)
   el.setAttribute(READY, "");
   // … your code: query inside `el` only, e.g. el.querySelectorAll(".acme-tab")
 })();
@@ -127,8 +125,8 @@ node <path-to-this-skill>/scripts/test-embed.mjs snippet.html --prefix acme-
 ```
 
 The script, `scripts/test-embed.mjs`:
-- **Lints** for unprefixed names, global selectors, `document.getElementById` and `document.querySelector`, external `<script src>`, `<link>` and web fonts, `window.parent`, missing reduced-motion or variable fallbacks, and missing run-once guards.
-- **Renders** with headless Chrome both normally and the way FrontLit does: its rewrites, a declarative shadow root, and the second script run at hydration.
+- **Lints** for unprefixed names, global selectors, `document.getElementById` and `document.querySelector`, external `<script src>`, `window.parent`, in-snippet `@font-face`, missing reduced-motion or variable fallbacks, and missing run-once guards, and warns about font links that slow the page.
+- **Renders** with headless Chrome both normally and the way FrontLit does: its rewrites and a declarative shadow root.
 - **Screenshots** 1280 px and 390 px in light and dark.
 
 Open every screenshot and check: headings legible, contrast fine in dark, nothing cut off or overflowing at 390 px, and the default tab or state correct. Then paste the snippet. After publishing, click through the interactive parts on the live page once.

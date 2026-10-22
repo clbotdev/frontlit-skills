@@ -1,4 +1,26 @@
-# The FrontLit builder: UI, quirks and automation
+# Pages in the visual builder
+
+Use this when the site's pages are edited in FrontLit's browser builder (the repository isn't connected for pages). The blocks, writing and design guidance in `blocks.md`, `writing.md` and `design.md` apply unchanged; this file covers what's different about working in the editor.
+
+## Ground rules
+
+- **Everything stays a draft. Never publish, unpublish or delete a published page unless the user explicitly asks.** SEO settings and theme drafts also go live on Publish.
+- **Never click a media "Remove" button** (it permanently deletes the file, even if a live page uses it). **Never apply a theme (✓ / "Use") unless asked** (it restyles the whole site).
+- **Switch to the right team first** (below, FrontLit #104).
+- **Only true content.** Don't invent customers, logos, numbers, quotes, prices or legal text.
+- **Fonts:** prefer the theme's fonts. A font service link in an embed works, but it slows every page (PageSpeed); if the site needs another face, set it in the theme. No third-party scripts in embeds.
+- **Review before publishing:** send desktop and mobile screenshots (light and dark) plus a change list, and wait. Report builder quirks to whoever maintains FrontLit.
+
+## Workflow
+
+1. **Orient.** Open the right team and site; list the existing pages, header, footer and theme. Ask which page to work on, its slug, and the one action it should drive.
+2. **Theme.** If the product has a design system and the user wants the site to match it, map its tokens (`theme-from-design-system.md`). Don't invent per-section colours.
+3. **Plan** the page (`writing.md`), then pick a style and section rhythm (`design.md`).
+4. **Build with blocks first** (`blocks.md`): set every visible text (unset fields show demo copy), one H1 (the hero), a CSS id on linked sections.
+5. **Embeds** only for what blocks can't do. Follow `embeds.md`, run `scripts/test-embed.mjs`, look at every screenshot, then paste.
+6. **SEO** under **Edit SEO settings**: title 50–60 characters, description 120–160, search engine visibility on unless private, social card 1200×630. For articles, the Excerpt is the description.
+7. **Review** with the visual QA in `design.md`, send screenshots and wait.
+8. **Publish only when told,** then check the live page at 1280 and 390 px in both modes, including interactive embeds.
 
 Labels below are FrontLit's at the time of writing. If a label differs, look for the nearest equivalent, and report the change (see "Reporting quirks").
 
@@ -10,7 +32,6 @@ Labels below are FrontLit's at the time of writing. If a label differs, look for
 ## Pages
 
 - **New pages automatically get the site Header and Footer.** These are shared blocks: editing them changes every page. The Footer has **Link Columns**, **Copyright** and a **color-mode toggle**.
-- **Changing a page's slug changes its public URL immediately,** even before you publish the content. Settle the slug before sharing links, then update header and footer links and any links on other pages.
 - The **top bar** has:
   - **Preview device** (Mobile / Tablet / Desktop)
   - **Edit theme**
@@ -30,7 +51,7 @@ Labels below are FrontLit's at the time of writing. If a label differs, look for
 - **Pasting raw Markdown produces a code block,** not formatted text. Convert Markdown to HTML first (any Markdown converter), then paste it as HTML. From a script, dispatch a `paste` `ClipboardEvent` whose `clipboardData` has `text/html`. By hand, copy the rendered HTML from a browser tab.
 - **Links:** select the text and use the toolbar's **Insert link** button. **Ctrl/Cmd+K doesn't open the link dialog.**
 - **Articles (blog posts) have Title and Excerpt only. There's no SEO field;** the excerpt is the search and social description, so write it like a meta description (120–160 characters). Pages have **Edit SEO settings** instead.
-- **Legal pages (terms, privacy):** copy the product's real, existing terms and privacy text **verbatim** (from the current site, the repository or the user). Never write, summarise or "improve" legal text. If none exists, stop and ask. Publish terms and privacy together so they never contradict each other.
+- **Legal pages (terms, privacy):** see the Legal row in `writing.md`. Publish terms and privacy together so they never contradict each other.
 
 ## Big snippets and copying
 
@@ -50,7 +71,7 @@ Labels below are FrontLit's at the time of writing. If a label differs, look for
 
 ## Driving the UI from automation (until there's an API)
 
-Prefer the FrontLit MCP tools (`list_pages`, `get_page`, `update_page`…) or Git sync (frontlit-pages skill) when available. When you must drive the builder:
+Prefer the FrontLit MCP tools (`list_pages`, `get_page`, `update_page`…) or Git sync (the rest of this skill) when available. When you must drive the builder:
 
 - **Inputs** are React-controlled. Set the value with the native setter, then fire events:
 

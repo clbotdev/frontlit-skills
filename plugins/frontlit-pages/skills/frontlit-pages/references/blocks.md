@@ -97,10 +97,10 @@ A copyable code block for developer audiences: install command, API call. `code`
 Content FrontLit's blocks can't express. Two kinds, which run very differently:
 
 - `"contentType": "url"`: an iframe of `content` (a video player, a booking widget). Set `aspectRatio` (`16:9`, `4:3`, `1:1`) or keep `default` with `height` in px.
-- `"contentType": "script"` (builder: **Script / iframe snippet**): `content` is HTML (with `<style>` and inline `<script>`) rendered **inline in the page inside a shadow root**, not in an iframe. It's server-rendered, so search engines index it, and it sizes to its content with `aspectRatio: "default"`. Inherited values cross the boundary: the page's CSS variables (`--foreground`, `--card`, `--border`, `--muted`…), colour and fonts. The site's CSS doesn't. Scripts run with `document.currentScript` set to `null`, and **twice** on live pages (parser + hydration).
+- `"contentType": "script"` (builder: **Script / iframe snippet**): `content` is HTML (with `<style>` and inline `<script>`) rendered **inline in the page inside a shadow root**, not in an iframe. It's server-rendered, so search engines index it, and it sizes to its content with `aspectRatio: "default"`. Inherited values cross the boundary: the page's CSS variables (`--foreground`, `--card`, `--border`, `--muted`…), colour and fonts. The site's CSS doesn't. Scripts run once, with `document.currentScript` set to `null`.
 
-Good for animated diagrams, comparison tables, tabbed code samples and logo strips with images. **Read `references/embeds.md` before writing a snippet** (prefixes, scoping, finding the root, dark mode, template), and test it with `scripts/test-embed.mjs`. Guardrails:
-- No external `<script src>`, `<link>` or web fonts.
+Good for animated diagrams, data tables, tabbed code samples and logo strips with images. **Read `references/embeds.md` before writing a snippet** (prefixes, scoping, finding the root, dark mode, template), and test it with `scripts/test-embed.mjs`. Guardrails:
+- No external `<script src>` or stylesheets. Prefer the theme's fonts to a font service (a font link works but slows every page).
 - Use theme variables with fallbacks, plus a hardcoded brand accent.
 - Honour `prefers-reduced-motion`.
 - Don't rebuild with an embed what a block already does: blocks follow the theme and stay editable in the builder.

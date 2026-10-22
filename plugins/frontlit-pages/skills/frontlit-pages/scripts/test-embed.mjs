@@ -11,9 +11,8 @@
 // It mounts the snippet twice:
 //   inline  plain light DOM, as a standalone page would run it.
 //   shadow  as FrontLit renders it: prepareEmbed() rewrites, a declarative shadow
-//           root in the server HTML, then the hydration pass that re-creates every
-//           <script> (so each inline script runs TWICE, and document.currentScript
-//           is null both times), the host mirroring `.dark` from the page.
+//           root in the server HTML (the parser runs each inline script once, with
+//           document.currentScript null), the host mirroring `.dark` from the page.
 // Each mount is captured at every width in light and dark, on top of stub page
 // variables (FrontLit's default theme, or --vars <css> with `.pb-theme {…}` and
 // `.pb-theme.dark {…}` blocks). Exit code 1 when the linter finds errors or a
@@ -126,8 +125,8 @@ for (const b of styleBlocks) walkCss(b.css, b.at);
 
 const allCss = styleBlocks.map((b) => b.css).join("\n");
 for (const m of content.matchAll(/@import\b/gi)) add("error", "CSS_IMPORT", "@import loads an external stylesheet; inline the CSS.", m.index);
-for (const m of content.matchAll(/<link\b[^>]*>/gi)) add("error", "LINK_TAG", `${m[0].slice(0, 80)}: no <link> tags. FrontLit hoists font and preconnect links to the page head, where they slow the whole page (PageSpeed); inherit the page's fonts instead.`, m.index);
-for (const m of content.matchAll(/fonts\.(googleapis|gstatic)\.com|use\.typekit\.net|fonts\.bunny\.net/gi)) add("error", "WEB_FONTS", "Web-font services are not allowed: inherit the page's fonts (the theme can already set them).", m.index);
+for (const m of content.matchAll(/<link\b[^>]*>/gi)) add("warn", "LINK_TAG", `${m[0].slice(0, 80)}: FrontLit hoists font, preconnect and preload links to the page head, so they work, but they load on every visit and cost PageSpeed. Prefer the theme's fonts (font: inherit). Stylesheet links stay inside the snippet.`, m.index);
+for (const m of content.matchAll(/fonts\.(googleapis|gstatic)\.com|use\.typekit\.net|fonts\.bunny\.net/gi)) add("warn", "WEB_FONTS", "Web fonts from a font service work (FrontLit hoists the link to the page) but slow every page that shows the snippet. Prefer the theme's fonts; if you need a face, set it in the theme instead.", m.index);
 for (const m of content.matchAll(/min-height\s*:\s*100d?vh/gi)) add("warn", "VIEWPORT_HEIGHT", "FrontLit drops min-height:100vh inside embeds; size to content instead.", m.index);
 for (const m of allCss.matchAll(/position\s*:\s*fixed/gi)) add("warn", "POSITION_FIXED", "position:fixed escapes the section and covers the page; avoid it in embeds.");
 if (/@keyframes|animation\s*:|<animate\b/i.test(content) && !/prefers-reduced-motion/i.test(content)) add("warn", "REDUCED_MOTION", "The snippet animates but has no @media (prefers-reduced-motion: reduce) fallback.");
@@ -142,7 +141,7 @@ for (const s of scriptBlocks) {
   for (const m of js.matchAll(/document\s*\.\s*(getElementById|querySelector(All)?|getElementsBy\w+)\s*\(/g)) add("error", "DOCUMENT_QUERY", `document.${m[1]}() can't see inside the embed's shadow root. Find your root first (see references/embeds.md), then query it.`, s.at);
   if (/window\.parent|parent\.document|top\.document/.test(js)) add("error", "WINDOW_PARENT", "FrontLit deletes any <script> that mentions window.parent (an iframe-era dark-mode sync). Use :host(.dark) / .dark in CSS instead.", s.at);
   if (/currentScript/.test(js) && !/shadowRoot/.test(js)) add("warn", "CURRENT_SCRIPT_ONLY", "document.currentScript is null for scripts inside a shadow root; add the shadow-root search fallback.", s.at);
-  if (js.trim() && !/data-[\w-]*ready|dataset\.\w+|__\w+(Ready|Init|Done)/i.test(js)) add("warn", "NO_RUN_GUARD", "No run-once guard found. On server-rendered pages FrontLit runs each script twice (HTML parser, then hydration); mark the root (data-xyz-ready) and return if it's set.", s.at);
+  if (js.trim() && !/data-[\w-]*ready|dataset\.\w+|__\w+(Ready|Init|Done)/i.test(js)) add("warn", "NO_RUN_GUARD", "No run-once guard found. Mark the root (data-xyz-ready) and return if it's set, so the snippet stays correct if a page renders it again (older FrontLit versions ran snippet scripts twice on live pages).", s.at);
 }
 if (content.length > 200_000) add("warn", "SIZE", `${content.length} characters; large snippets paste fine, but consider trimming.`);
 
@@ -198,8 +197,7 @@ html,body{margin:0}body{font-family:system-ui,-apple-system,"Segoe UI",sans-seri
 <pre id="__report" style="display:none"></pre>
 <script>(function(){var host=document.getElementById("__host");
 ${mount === "shadow" ? `var root=host.shadowRoot||host.attachShadow({mode:"open"});
-// FrontLit's hydration effect: re-create every script so it runs (runScripts in inline-embed.tsx).
-for (const old of root.querySelectorAll("script")) { const s=document.createElement("script"); for (const {name,value} of old.attributes) s.setAttribute(name,value); s.textContent=old.textContent; old.replaceWith(s); }
+// The HTML parser already ran the scripts; FrontLit's hydration effect leaves them alone.
 host.classList.toggle("dark", !!host.parentElement.closest(".dark") || document.documentElement.classList.contains("dark"));` : ""}
 setTimeout(function(){var r={mount:${JSON.stringify(mount)},errors:__errors,runs:window.__embedRuns||0,height:Math.ceil(document.documentElement.scrollHeight),hostHeight:Math.ceil(host.getBoundingClientRect().height),overflowX:document.documentElement.scrollWidth>window.innerWidth,shadow:!!host.shadowRoot};
 document.getElementById("__report").textContent=JSON.stringify(r);},1500);})();</script></body></html>`;
@@ -273,7 +271,7 @@ if (flag("json")) {
       if (r.mount === "shadow" && inl?.runs > 0 && r.runs === 0) notes.push("FrontLit removed or didn't run the scripts (window.parent?)");
       console.log(`  ${r.mount.padEnd(6)} ${String(r.width).padStart(4)} ${r.mode.padEnd(5)} embed ${r.hostHeight}px, script runs ${r.runs}${notes.length ? "  !! " + notes.join("; ") : "  ok"}  ${basename(r.png)}`);
     }
-    if (results.some((r) => r.mount === "shadow" && r.runs > 1)) console.log("  note: shadow mounts run each inline script twice (parser + hydration), as on a live FrontLit page; the screenshots show whether that's harmless.");
+    if (results.some((r) => r.mount === "shadow" && r.runs > 1)) console.log("  note: a shadow mount ran a script more than once; check the snippet doesn't re-insert its own scripts.");
   }
   console.log("\nLook at every screenshot: hero/heading legibility, dark-mode contrast, nothing cut off at 390px.");
 }
