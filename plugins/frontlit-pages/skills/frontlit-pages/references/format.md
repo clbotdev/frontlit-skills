@@ -17,7 +17,7 @@ frontlit/
 ```
 
 - **File name = URL.** `pricing.json` → `/pricing`, `index.json` → `/`. Lowercase letters, digits and single hyphens only (`about-us.json`). No nested folders yet: `pages/solutions/x.json` is an error.
-- Only `.json` files count; other files in `pages/` are ignored. Up to 200 files, each under 2 MB.
+- Only `.json` files become pages; other files in `pages/` are ignored. The folder can hold at most 200 entries (every file and folder counts, not only `.json`), and each page file must be under 2 MB.
 - **Reserved routes** can't be pages: `api`, `embed`, `opengraph-image`, `sitemap.xml`, `robots.txt`, `favicon.ico`, `openapi.json`, `_preview`, `release-preview`, `schema`.
 - **The folder is the whole site.** Every live page needs a file. A page that has no file goes offline when the folder syncs.
 - **Content feeds:** `blog.json`, `docs.json` and `changelog.json` must each contain exactly one `{ "name": "content-feed" }` block (where the article list, docs or updates render). No other page may have one. Article, doc and changelog entries themselves are not page files.
@@ -87,7 +87,7 @@ No other keys are allowed (unknown keys are errors). Block names and settings ar
 - **Links** (`href`, `buttonAction`, `secondaryButtonAction`, `ctaHref`): a site path (`/pricing`), an anchor on a page (`/#faq`, which needs a block with `"cssId": "faq"` on `/`), or an absolute `https://` URL.
 - **Rich text** (settings described as Markdown: hero/grid/banner `description`, content `body`, rich-text `text`, …): CommonMark + GFM. No HTML, MDX or JSX. Don't use `#` headings inside it; the block title is already the section heading. Links inside rich text are checked like other links.
 - **Titles:** wrap words in `*asterisks*` to highlight them in the theme's highlight style: `"Docs your users *actually* read"`.
-- **Media** (`media`, `socialImage`): `{ "url": "…", "alt": "…" }`. `url` is an absolute `https://` URL, or a path to an image in the repository: relative to the page file (`../assets/hero.png`) or to the repository root when it starts with `/` (`/public/hero.png`). PNG, JPG, GIF, WebP, SVG or AVIF, under 10 MB; FrontLit uploads repository images on sync. Always write `alt` for images that carry meaning.
+- **Media** (`media`, `socialImage`): `{ "url": "…", "alt": "…" }`. `url` is an absolute `https://` URL (FrontLit accepts `http://`, but browsers block it on an https site), or a path to an image inside the repository: relative to the page file (`../assets/hero.png`) or to the repository root when it starts with `/` (`/public/hero.png`). PNG, JPG, GIF, WebP, SVG or AVIF, under 10 MB; FrontLit uploads repository images on sync. Always write `alt` for images that carry meaning.
 - **Icons:** a Lucide icon name in PascalCase (`"Zap"`, `"ShieldCheck"`, `"GitPullRequest"`); brand icons such as `"Github"`, `"Gitlab"` and `"Slack"` exist too. The names FrontLit renders are in `scripts/schema/lucide-icons.json`; an unknown name shows Sparkles in `featured` and no icon in `grid` and `marquee`.
 - **Plain strings** (item descriptions, FAQ answers, small print) render as text; Markdown there shows literally.
 
@@ -109,9 +109,9 @@ Errors (nothing goes live until fixed):
 | `CONTENT_FEED_REQUIRED` / `CONTENT_FEED_NOT_ALLOWED` | See content feeds above. |
 | `LINK_TARGET_MISSING` (site.json) | A header or footer link points nowhere. |
 | `ASSET_MISSING` / `ASSET_TOO_LARGE` | A repository image path that doesn't exist, isn't an image, or is over 10 MB. |
-| `PAGE_TOO_LARGE`, `PAGES_LIMIT` | Over 2 MB per file, or over 200 files. |
+| `PAGE_TOO_LARGE`, `PAGES_LIMIT` | A page file over 2 MB, or over 200 entries in `pages/`. |
 
-Warnings: `SEO_DESCRIPTION_MISSING`, `SEO_TITLE_LONG`, `SEO_DESCRIPTION_LONG`, `LINK_TARGET_MISSING` (in pages). The bundled checker adds `DEMO_CONTENT` (an unset setting renders demo copy), `HEADING_LEVEL`, `ALT_MISSING` and `SCHEMA_URL`.
+Warnings: `SEO_DESCRIPTION_MISSING`, `SEO_TITLE_LONG`, `SEO_DESCRIPTION_LONG`, `LINK_TARGET_MISSING` (in pages). The bundled checker adds `DEMO_CONTENT` (an unset setting renders demo copy), `ANCHOR_MISSING` (a `/page#id` link with no block `cssId` to scroll to), `INSECURE_URL` (an `http://` image), `UNKNOWN_ICON`, `PLACEHOLDER`, `HEADING_LEVEL`, `ALT_MISSING` and `SCHEMA_URL`.
 
 ## Publishing
 

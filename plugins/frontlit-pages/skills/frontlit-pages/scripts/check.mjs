@@ -7,7 +7,7 @@
 // FrontLit's own sync is authoritative; this catches problems before pushing.
 // No dependencies.
 import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
-import { dirname, extname, join, normalize, relative } from "node:path";
+import { dirname, extname, isAbsolute, join, normalize, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -229,12 +229,14 @@ function checkMedia(file, schema, value) {
     const key = path.at(-1);
     if ((key !== "media" && key !== "socialImage") || typeof v?.url !== "string") return;
     if (/^[a-z][a-z0-9+.-]*:/i.test(v.url) || v.url.startsWith("//")) {
-      if (!/^https?:/i.test(v.url)) error(file, ptr([...path, "url"]), "ASSET_URL", "Use an https:// URL or a repository path.");
+      if (/^http:/i.test(v.url)) warn(file, ptr([...path, "url"]), "INSECURE_URL", "Use https://; browsers block http:// images on an https site.");
+      else if (!/^https:/i.test(v.url)) error(file, ptr([...path, "url"]), "ASSET_URL", "Use an https:// URL or a repository path.");
       return;
     }
-    const repoPath = v.url.startsWith("/") ? v.url.slice(1) : normalize(join(relative(root, dirname(file)), v.url));
+    const repoPath = v.url.startsWith("/") ? normalize(v.url.slice(1)) : normalize(join(relative(root, dirname(file)), v.url));
     const full = join(root, repoPath);
-    if (!existsSync(full) || !statSync(full).isFile() || !IMAGE_TYPES.includes(extname(full).toLowerCase()))
+    // FrontLit only looks inside the repository.
+    if (repoPath === ".." || repoPath.startsWith("../") || isAbsolute(repoPath) || !existsSync(full) || !statSync(full).isFile() || !IMAGE_TYPES.includes(extname(full).toLowerCase()))
       error(file, ptr([...path, "url"]), "ASSET_MISSING", `${v.url} isn't an image in the repository (${IMAGE_TYPES.join(" ")}).`);
     else if (statSync(full).size > LIMITS.assetBytes) error(file, ptr([...path, "url"]), "ASSET_TOO_LARGE", "Images must be under 10 MB.");
     if (!v.alt && key === "media") warn(file, ptr([...path, "alt"]), "ALT_MISSING", "Describe the image for screen readers and search.");
@@ -288,7 +290,10 @@ function checkMarkdown(file, schema, value) {
 // --- Pages -----------------------------------------------------------------
 
 const entries = readdirSync(folder).sort();
-if (entries.length > LIMITS.files) error(folder, "", "PAGES_LIMIT", `More than ${LIMITS.files} files.`);
+// FrontLit counts every entry under the pages folder, nested ones included.
+const countEntries = (dir) =>
+  readdirSync(dir).reduce((n, name) => n + 1 + (statSync(join(dir, name)).isDirectory() ? countEntries(join(dir, name)) : 0), 0);
+if (countEntries(folder) > LIMITS.files) error(folder, "", "PAGES_LIMIT", `More than ${LIMITS.files} entries in the pages folder (every file and folder counts, not only .json).`);
 const pages = [];
 for (const name of entries) {
   const file = join(folder, name);
@@ -389,14 +394,30 @@ const exists = (href) => {
   const target = href.split(/[?#]/)[0].replace(/\/+$/, "") || "/";
   return routes.has(target) || DYNAMIC_PREFIXES.some((p) => target.startsWith(p)) || RESERVED.includes(target.slice(1));
 };
+// In-page anchors: FrontLit ignores the #fragment, so a missing cssId is a warning.
+const anchors = new Map(
+  pages.filter((p) => p.page).map((p) => [p.route, new Set(p.page.layout.map((b) => b.settings?.cssId).filter(Boolean))]),
+);
+const checkAnchor = (file, link) => {
+  const [rest, fragment] = link.href.split("#", 2);
+  if (!fragment) return;
+  const route = rest.split("?")[0].replace(/\/+$/, "") || "/";
+  const ids = anchors.get(route);
+  if (ids && !ids.has(decodeURIComponent(fragment)))
+    warn(file, ptr(link.path), "ANCHOR_MISSING", `No block on ${route} has "cssId": "${fragment}", so ${link.href} won't scroll anywhere.`);
+};
 for (const part of ["header", "footer"])
-  for (const link of internalLinks(site?.[part], [part]))
+  for (const link of internalLinks(site?.[part], [part])) {
     if (!exists(link.href)) error(siteFile, ptr(link.path), "LINK_TARGET_MISSING", `${link.href} isn't a published page; the release would fail.`);
+    else checkAnchor(siteFile, link);
+  }
 const blockSchemas = PAGE_SCHEMA.properties.layout.items.anyOf;
 for (const p of pages)
   if (p.page) {
-    for (const link of internalLinks(p.page.layout, ["layout"]))
+    for (const link of internalLinks(p.page.layout, ["layout"])) {
       if (!exists(link.href)) warn(p.file, ptr(link.path), "LINK_TARGET_MISSING", `${link.href} isn't a published page in this folder.`);
+      else checkAnchor(p.file, link);
+    }
     // A button with a caption but no action links to the block's default target.
     p.page.layout.forEach((block, i) => {
       const props = blockSchemas.find((s) => s.properties.name.const === block.name)?.properties.settings?.properties ?? {};
